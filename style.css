@@ -1,0 +1,127 @@
+/* Rotating animation for circular badge */
+@keyframes spin-slow {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.animate-spin-slow {
+    animation: spin-slow 25s linear infinite;
+}
+
+/* Custom border thickness */
+.border-3 {
+    border-width: 3px;
+}
+
+/* Smooth transitions */
+button,
+.group {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Text shadow for better readability - Only for h1 in hero */
+#home h1 {
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* Ensure section starts from absolute top */
+#home {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+/* Responsive padding adjustments to avoid navbar overlap */
+/* Mobile (320px - 640px) */
+@media (max-width: 640px) {
+    #home .relative.z-10 {
+        padding-top: 7rem; /* ~112px - accounts for mobile navbar */
+    }
+    
+    h1 {
+        font-size: 1.875rem; /* 30px */
+        line-height: 1.2;
+    }
+    
+    h2 {
+        font-size: 2rem; /* 32px */
+    }
+}
+
+/* Small tablets (640px - 768px) */
+@media (min-width: 640px) and (max-width: 768px) {
+    #home .relative.z-10 {
+        padding-top: 9rem; /* ~144px */
+    }
+}
+
+/* Tablets (768px - 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+    #home .relative.z-10 {
+        padding-top: 10rem; /* ~160px */
+    }
+}
+
+/* Desktop (1024px+) */
+@media (min-width: 1024px) {
+    #home .relative.z-10 {
+        padding-top: 12rem; /* ~192px - accounts for large navbar */
+    }
+}
+
+/* Extra large screens */
+@media (min-width: 1280px) {
+    #home .relative.z-10 {
+        padding-top: 14rem; /* ~224px */
+    }
+}
+
+/* Accessibility: Reduce motion */
+@media (prefers-reduced-motion: reduce) {
+    .animate-spin-slow,
+    .group-hover\:scale-110,
+    .group-hover\:translate-x-1 {
+        animation: none !important;
+        transform: none !important;
+    }
+}
+
+/* Touch devices - increase tap targets */
+@media (hover: none) and (pointer: coarse) {
+    button {
+        min-height: 48px;
+        min-width: 48px;
+    }
+}
+ @keyframes fade-in-up {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-fade-in-up {
+        animation: fade-in-up 0.8s ease-out forwards;
+    }
+
+     @keyframes fade-in-up {
+        from {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-fade-in-up {
+        animation: fade-in-up 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
