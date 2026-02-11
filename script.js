@@ -8,33 +8,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const hamburgerIcon = document.getElementById('hamburgerIcon');
     const closeIcon = document.getElementById('closeIcon');
 
-    if (menuToggle) {
+    if (menuToggle && mobileMenu) {
         menuToggle.addEventListener('click', (e) => {
             e.stopPropagation();
             mobileMenu.classList.toggle('hidden');
-            hamburgerIcon.classList.toggle('hidden');
-            closeIcon.classList.toggle('hidden');
+            hamburgerIcon?.classList.toggle('hidden');
+            closeIcon?.classList.toggle('hidden');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!mobileMenu.contains(e.target) && !menuToggle.contains(e.target)) {
+                mobileMenu.classList.add('hidden');
+                hamburgerIcon?.classList.remove('hidden');
+                closeIcon?.classList.add('hidden');
+            }
         });
     }
 
     document.querySelectorAll('.mobile-link').forEach(link => {
         link.addEventListener('click', () => {
-            mobileMenu.classList.add('hidden');
-            hamburgerIcon.classList.remove('hidden');
-            closeIcon.classList.add('hidden');
+            mobileMenu?.classList.add('hidden');
+            hamburgerIcon?.classList.remove('hidden');
+            closeIcon?.classList.add('hidden');
         });
-    });
-
-    document.addEventListener('click', (e) => {
-        if (
-            !mobileMenu.contains(e.target) &&
-            !menuToggle.contains(e.target) &&
-            !mobileMenu.classList.contains('hidden')
-        ) {
-            mobileMenu.classList.add('hidden');
-            hamburgerIcon.classList.remove('hidden');
-            closeIcon.classList.add('hidden');
-        }
     });
 
     /* =========================
@@ -45,11 +41,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const logo = document.getElementById('logo');
     const navLinks = document.querySelectorAll('.nav-link');
 
-    let lastKnownScroll = 0;
-    let ticking = false;
+    let isShrunk = false;
 
     function handleNavbar(scrollY) {
-        if (scrollY > 50) {
+        if (!navbar || !navbarContent || !logo) return;
+
+        if (scrollY > 50 && !isShrunk) {
+            isShrunk = true;
+
             navbar.classList.remove('bg-transparent');
             navbar.classList.add('bg-white', 'shadow-lg');
 
@@ -65,7 +64,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 link.classList.add('text-[#C9A33A]', 'hover:text-[#4B5A2A]');
                 link.classList.remove('text-white');
             });
-        } else {
+        }
+
+        if (scrollY <= 50 && isShrunk) {
+            isShrunk = false;
+
             navbar.classList.add('bg-transparent');
             navbar.classList.remove('bg-white', 'shadow-lg');
 
@@ -80,14 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.addEventListener('scroll', () => {
-        lastKnownScroll = window.scrollY;
-        if (!ticking) {
-            window.requestAnimationFrame(() => {
-                handleNavbar(lastKnownScroll);
-                ticking = false;
-            });
-            ticking = true;
-        }
+        window.requestAnimationFrame(() => handleNavbar(window.scrollY));
     });
 
     /* =========================
@@ -116,53 +112,49 @@ document.addEventListener('DOMContentLoaded', () => {
     /* =========================
        INTERSECTION OBSERVER
     ========================== */
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry, index) => {
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
             if (entry.isIntersecting) {
-                setTimeout(() => {
-                    entry.target.classList.add('animate-fadeUp');
-                    entry.target.classList.remove('opacity-0');
+                entry.target.classList.add('animate-fadeUp');
+                entry.target.classList.remove('opacity-0');
 
-                    const counter = entry.target.querySelector('[data-target]');
-                    if (counter && !counter.dataset.counted) {
-                        counter.dataset.counted = 'true';
-                        animateCounter(counter, +counter.dataset.target);
-                    }
-                }, index * 120);
+                const counter = entry.target.querySelector('[data-target]');
+                if (counter && !counter.dataset.counted) {
+                    counter.dataset.counted = 'true';
+                    animateCounter(counter, +counter.dataset.target);
+                }
 
                 observer.unobserve(entry.target);
             }
         });
-    }, {
-        threshold: 0.15,
-        rootMargin: '0px 0px -50px 0px'
-    });
+    }, { threshold: 0.15 });
 
-    document.querySelectorAll('.scroll-animate').forEach(el => observer.observe(el));
+    document.querySelectorAll('.scroll-animate')
+        .forEach(el => observer.observe(el));
 
     /* =========================
        SMOOTH SCROLL
     ========================== */
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', (e) => {
+            const target = document.querySelector(anchor.getAttribute('href'));
+            if (!target) return;
             e.preventDefault();
-            document.querySelector(anchor.getAttribute('href'))?.scrollIntoView({
-                behavior: 'smooth'
-            });
+            target.scrollIntoView({ behavior: 'smooth' });
         });
     });
 
     /* =========================
        TESTIMONIAL SLIDER
     ========================== */
+    const track = document.getElementById("testimonialTrack");
+    const slides = track?.children || [];
     let currentIndex = 0;
-    const totalSlides = 3;
 
     function moveTestimonial(index) {
-        const track = document.getElementById("testimonialTrack");
-        if (!track) return;
+        if (!track || !slides.length) return;
 
-        const slideWidth = track.children[0].offsetWidth;
+        const slideWidth = slides[0].offsetWidth;
         track.style.transform = `translateX(-${slideWidth * index}px)`;
 
         document.querySelectorAll(".dot").forEach((dot, i) => {
@@ -171,76 +163,75 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    setInterval(() => {
-        currentIndex = (currentIndex + 1) % totalSlides;
-        moveTestimonial(currentIndex);
-    }, 5000);
+    if (slides.length) {
+        setInterval(() => {
+            currentIndex = (currentIndex + 1) % slides.length;
+            moveTestimonial(currentIndex);
+        }, 5000);
 
-    window.addEventListener('resize', () => moveTestimonial(currentIndex));
-
+        window.addEventListener('resize', () => moveTestimonial(currentIndex));
+    }
 });
 
 /* =========================
-   COUNTER (OPTIMIZED)
+   COUNTER
 ========================= */
 function animateCounter(el, target, duration = 2000) {
-    let startTime = null;
-
-    function update(timestamp) {
-        if (!startTime) startTime = timestamp;
-        const progress = Math.min((timestamp - startTime) / duration, 1);
+    let start = null;
+    function update(ts) {
+        if (!start) start = ts;
+        const progress = Math.min((ts - start) / duration, 1);
         el.textContent = Math.floor(progress * target).toLocaleString();
         if (progress < 1) requestAnimationFrame(update);
     }
-
     requestAnimationFrame(update);
 }
-document.getElementById('contactForm').addEventListener('submit', function(e) {
+
+/* =========================
+   CONTACT FORM → WHATSAPP
+========================= */
+const contactForm = document.getElementById('contactForm');
+const phoneInput = document.getElementById('phone');
+
+if (contactForm) {
+    contactForm.addEventListener('submit', function (e) {
         e.preventDefault();
-        
-        // Get form values
-        const name = document.getElementById('name').value;
-        const email = document.getElementById('email').value;
-        const phone = document.getElementById('phone').value;
-        const service = document.getElementById('service').value || 'Not specified';
-        const message = document.getElementById('message').value;
-        
-        // Validate phone number (Indian format)
-        const phoneRegex = /^[0-9]{10}$/;
-        if (!phoneRegex.test(phone)) {
-            alert('Please enter a valid 10-digit phone number');
+
+        const name = this.name.value;
+        const email = this.email.value;
+        const phone = this.phone.value;
+        const service = this.service?.value || 'Not specified';
+        const message = this.message.value;
+
+        if (!/^[0-9]{10}$/.test(phone)) {
+            alert('Enter a valid 10-digit phone number');
             return;
         }
-        
-        // Your WhatsApp number (replace with your actual number)
-        const whatsappNumber = '9009279002'; // Format: country code + number (no + or spaces)
-        
-        // Create WhatsApp message
-        const whatsappMessage = `*New Inquiry from Nirantar Website*%0A%0A` +
-            `*Name:* ${encodeURIComponent(name)}%0A` +
-            `*Email:* ${encodeURIComponent(email)}%0A` +
-            `*Phone:* ${encodeURIComponent(phone)}%0A` +
-            `*Service Interest:* ${encodeURIComponent(service)}%0A%0A` +
-            `*Message:*%0A${encodeURIComponent(message)}`;
-        
-        // Create WhatsApp URL
-        const whatsappURL = `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`;
-        
-        // Open WhatsApp in new tab
-        window.open(whatsappURL, '_blank');
-        
-        // Optional: Reset form after submission
-        this.reset();
-        
-        // Optional: Show success message
-        alert('Redirecting to WhatsApp... Please send the pre-filled message!');
-    });
 
-    // Phone number formatting (optional)
-    document.getElementById('phone').addEventListener('input', function(e) {
-        let value = e.target.value.replace(/\D/g, '');
-        if (value.length > 10) {
-            value = value.slice(0, 10);
-        }
-        e.target.value = value;
+        const whatsappNumber = '9009279002';
+        const text = `
+New Inquiry from Nirantar Website
+
+Name: ${name}
+Email: ${email}
+Phone: ${phone}
+Service: ${service}
+
+Message:
+${message}
+        `.trim();
+
+        window.open(
+            `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(text)}`,
+            '_blank'
+        );
+
+        this.reset();
     });
+}
+
+if (phoneInput) {
+    phoneInput.addEventListener('input', e => {
+        e.target.value = e.target.value.replace(/\D/g, '').slice(0, 10);
+    });
+}
