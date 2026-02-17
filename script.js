@@ -226,7 +226,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            const whatsappNumber = "9009279002";
+            const whatsappNumber = "+919009279002";
             const text = `
 New Inquiry from Nirantar Website
 
