@@ -1,107 +1,110 @@
-
 html {
   scroll-behavior: smooth;
 }
 
+/* =========================
+   SCROLL OFFSET FIX
+========================= */
+section[id] {
+  scroll-margin-top: 80px;
+}
 
 /* =========================
    ROTATING BADGE
 ========================= */
 @keyframes spin-slow {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .animate-spin-slow {
-    animation: spin-slow 25s linear infinite;
+  animation: spin-slow 25s linear infinite;
 }
 
 /* =========================
    UTILITIES
 ========================= */
 .border-3 {
-    border-width: 3px;
+  border-width: 3px;
 }
 
-/* Restrict transitions for performance */
 button {
-    transition: background-color 0.3s ease,
-                color 0.3s ease,
-                transform 0.3s ease;
+  transition: background-color 0.3s ease,
+              color 0.3s ease,
+              transform 0.3s ease;
 }
 
 .group {
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* =========================
    HERO SECTION
 ========================= */
 #home {
-    margin-top: 0 !important;
-    padding-top: 0 !important;
+  margin-top: 0 !important;
+  padding-top: 0 !important;
 }
 
 #home h1 {
-    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
 }
 
-/* Navbar-safe spacing using clamp (cleaner) */
 #home .relative.z-10 {
-    padding-top: clamp(7rem, 12vw, 14rem);
+  padding-top: clamp(7rem, 12vw, 14rem);
 }
 
 /* =========================
    RESPONSIVE TYPOGRAPHY
 ========================= */
 @media (max-width: 640px) {
-    h1 {
-        font-size: 1.875rem;
-        line-height: 1.2;
-    }
+  h1 {
+    font-size: 1.875rem;
+    line-height: 1.2;
+  }
 
-    h2 {
-        font-size: 2rem;
-    }
+  h2 {
+    font-size: 2rem;
+  }
 }
 
 /* =========================
    FADE UP ANIMATION
 ========================= */
 @keyframes fade-in-up {
-    from {
-        opacity: 0;
-        transform: translateY(40px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .animate-fade-in-up {
-    animation: fade-in-up 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fade-in-up 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* =========================
    ACCESSIBILITY
 ========================= */
 @media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-        animation: none !important;
-        transition: none !important;
-        transform: none !important;
-    }
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
 }
 
 /* =========================
    TOUCH DEVICES
 ========================= */
 @media (hover: none) and (pointer: coarse) {
-    button {
-        min-height: 48px;
-        min-width: 48px;
-    }
+  button {
+    min-height: 48px;
+    min-width: 48px;
+  }
 }
